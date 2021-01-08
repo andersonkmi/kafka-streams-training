@@ -9,6 +9,7 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.ValueMapper;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -26,7 +27,7 @@ public class StreamsStarterApp {
         KStream<String, String> wordCountInput = builder.stream("word-count-input");
 
         KTable<String, Long> wordCounts = wordCountInput
-                .mapValues(value -> value.toLowerCase())
+                .mapValues((ValueMapper<String, String>) String::toLowerCase)
                 .flatMapValues(value -> Arrays.asList(value.split(" ")))
                 .selectKey((ignoredKey, word) -> word)
                 .groupByKey()
